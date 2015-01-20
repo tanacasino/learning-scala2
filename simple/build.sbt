@@ -9,7 +9,22 @@ scalaVersion := "2.11.5"
 
 organization := "com.github.tanacasino"
 
-scalacOptions ++= Seq("-unchecked", "-deprecation")
+scalacOptions ++= (
+  "-deprecation" ::
+  "-unchecked" ::
+  "-Xlint" ::
+  "-language:existentials" ::
+  "-language:higherKinds" ::
+  "-language:implicitConversions" ::
+  Nil
+)
+
+shellPrompt := { state =>
+  val branch = if(file(".git").exists){
+    "git branch".lines_!.find{_.head == '*'}.map{_.drop(1)}.getOrElse("")
+  } else ""
+  Project.extract(state).currentRef.project + branch + " > "
+}
 
 libraryDependencies ++= {
   Seq(
