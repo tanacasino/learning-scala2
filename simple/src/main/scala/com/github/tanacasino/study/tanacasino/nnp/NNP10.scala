@@ -242,12 +242,6 @@ trait NNP10 {
     compress0(List.empty, list).reverse
   }
 
-
-  def hoge = {
-    val javalist = new util.ArrayList[String]()
-    javalist.asScala.foreach(println)
-    val jlist = List(1,2).asJava
-  }
 }
 
 
