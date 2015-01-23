@@ -20,10 +20,10 @@ scalacOptions ++= (
 )
 
 shellPrompt := { state =>
-  val branch = if(file(".git").exists){
+  val branch = if(file("../.git").exists){
     "git branch".lines_!.find{_.head == '*'}.map{_.drop(1)}.getOrElse("")
   } else ""
-  Project.extract(state).currentRef.project + branch + " > "
+  s"[${scala.Console.CYAN}${Project.extract(state).currentRef.project}${scala.Console.RESET} :${scala.Console.GREEN}$branch${scala.Console.RESET}] " + "$ "
 }
 
 libraryDependencies ++= {
