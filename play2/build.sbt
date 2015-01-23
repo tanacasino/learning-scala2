@@ -3,7 +3,7 @@ val originalJvmOptions = sys.process.javaVmArguments.filter(
 )
 
 val baseSettings = Seq(
-  scalaVersion := "2.11.4",
+  scalaVersion := "2.11.5",
   scalacOptions ++= (
     "-deprecation" ::
     "-unchecked" ::
@@ -16,10 +16,10 @@ val baseSettings = Seq(
   watchSources ~= { _.filterNot(f => f.getName.endsWith(".swp") || f.getName.endsWith(".swo") || f.isDirectory) },
   javaOptions ++= originalJvmOptions,
   shellPrompt := { state =>
-    val branch = if(file(".git").exists){
+    val branch = if(file("../.git").exists){
       "git branch".lines_!.find{_.head == '*'}.map{_.drop(1)}.getOrElse("")
-    }else ""
-    Project.extract(state).currentRef.project + branch + " > "
+    } else ""
+    s"[${scala.Console.CYAN}${Project.extract(state).currentRef.project}${scala.Console.RESET} :${scala.Console.GREEN}$branch${scala.Console.RESET}] " + "$ "
   },
   incOptions := incOptions.value.withNameHashing(true),
   resolvers ++= Seq(Opts.resolver.sonatypeReleases)
