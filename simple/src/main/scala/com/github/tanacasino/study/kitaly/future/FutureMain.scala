@@ -9,16 +9,115 @@ import scala.util.{Failure, Success}
  */
 object FutureMain1 extends Future1 {
 
+  
+
   def main(args: Array[String]): Unit = {
 //    futureIntro()
 //    future1()
 //    future2()
 //    future3()
+//    future4()
+//    future7()
+//    future11()
+    future12()
   }
 }
 
 trait Future1 {
 
+  def future12(): Unit = {
+    def post(endpoint: String): Future[Either[Throwable, String]] = {
+      println(s"post to $endpoint")
+      val randInt = Math.round(Math.random() * 5)
+      Thread.sleep(randInt * 1000)
+      Future.successful(Right("Ok"))
+    }
+    
+    val server = "localhost"
+    val cluster1 = Seq("server1", "server2")
+    val cluster2 = Seq("server3", "server4")
+    
+    Seq(cluster1, cluster2).foreach { cluster => 
+      val restore = cluster.map { server =>
+        post(s"http://$server/restore")
+      }
+      val restoreDone = Future.sequence(restore)
+      
+      val activate = restoreDone.map {results => 
+        cluster.map { server =>
+          post(s"http://$server/activate")
+        }
+      }
+    }
+    Thread.sleep(10000)
+  }
+  
+  def future11(): Unit = {
+//    val result = Seq("rikunabi", "mynavi", "en")
+//      .map { id => Future(aggregate(id)) }
+//      .sum
+    
+    val result = Future
+      .reduce(
+        Seq("rikunabi", "mynavi", "en")
+          .map(id => Future(aggregate(id)))
+      )(_ + _)
+    
+    result.onSuccess{
+      case x: Int => println(x)
+    }
+
+    
+    Thread.sleep(3000)
+  }
+
+  private def aggregate(id: String): Int = {
+    Thread.sleep(500)
+    id.size
+  }
+
+
+  //TODO(kitaly) やってくる
+  def future8(): Unit = {
+//    val futures = for {
+//      i <- List(1,2,3,4,5)
+//      f <- Future(i)
+//    } yield {
+//      f
+//    }
+  }
+  
+  def future7(): Unit = {
+    val futures:List[Future[Either[Throwable, Int]]] = List(1, 2, 3, 4, 5).map { i =>
+      Future {
+        if(i % 2 == 0) throw new Exception("Error")
+        else Right(i)
+      }.recover{
+        case t:Throwable => Left(t)
+      }
+    }
+    
+    val future = Future.sequence(futures);
+    
+    future.onSuccess{ 
+      case results =>
+        results.foreach {
+          case Right(v) => println(v)
+          case Left(e) => println(e.getMessage)
+        }
+    }
+    
+    Thread.sleep(2000)
+  }
+  
+  /**
+   * Failure[Throwable] を Future[Throwable] にする
+   */
+  def future4(): Unit = {
+    val f = Future("Hello").filter(_.size <  5)
+    f.failed foreach println
+    Thread.sleep(1000)
+  }
 
   /**
    * Recover & RecoverWith
