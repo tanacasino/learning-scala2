@@ -18,8 +18,8 @@ object Option17thFeb {
     val either3 = x3.filter(_.nonEmpty).toRight(("x3", "error.required"))
     
     val either5 = Try(
-      x5.withFilter(_.nonEmpty).map(_.toInt)
-    ).toOption.flatten.toRight(("x5", "error.number"))
+        x5.withFilter(_.nonEmpty).map(_.toInt)
+      ).toOption.flatten.toRight(("x5", "error.number"))
 
     // Merge validation errors into a map
     val errMap = List(either3, either5)
