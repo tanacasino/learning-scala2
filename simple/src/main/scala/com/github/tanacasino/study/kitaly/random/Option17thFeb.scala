@@ -10,27 +10,38 @@ object Option17thFeb {
   def main(args: Array[String]) {
 
     // Input Data
-    val x3: Option[String] = Some("abc")
-    val x5: Option[String] = Some("123")
+    val x3: Option[String] = Some("")
+    val x5: Option[String] = Some("abc")
     
+    otehon
     
-    // Validation
-    val either3 = x3.filter(_.nonEmpty).toRight(("x3", "error.required"))
+    def otehon = {
+      val res3 = x3.filter(_.isEmpty).map(_ => ("x3", "error.required"))
+      val res5 = x5.flatMap(s => Try(s.toInt).failed.toOption).map(_ => ("x5", "error.number"))
+      
+      println(res3, res5)
+    }
     
-    val either5 = Try(
+    def kitalyTry() = {
+      // Validation
+      val either3 = x3.filter(_.isEmpty).toRight(("x3", "error.required"))
+
+      val either5 = Try(
         x5.withFilter(_.nonEmpty).map(_.toInt)
       ).toOption.flatten.toRight(("x5", "error.number"))
 
-    // Merge validation errors into a map
-    val errMap = List(either3, either5)
-      .withFilter(_.isLeft) map {
+      // Merge validation errors into a map
+      val errMap = List(either3, either5)
+        .withFilter(_.isLeft) map {
         case Left((key, value)) => (key, value)
       } toMap
-    
-    // Print out results
-    println(either3)
-    println(either5)
-    println(errMap)
+
+      // Print out results
+      println(either3)
+      println(either5)
+      println(errMap)
+    }
+
   }
 
 }
