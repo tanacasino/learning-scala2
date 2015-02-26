@@ -17,10 +17,6 @@ object Partial {
   }
 
   def replace(langs: Seq[String], pf: PartialFunction[String, String]): Seq[String] = {
-
-    def tryReplaceLang(lang: String): Option[String] =
-      Try(pf(lang)).orElse(Try(lang)).toOption
-
-    langs.flatMap(tryReplaceLang)
+    langs.map(l => Try(pf(l)).getOrElse(l)).toSeq
   }
 }
