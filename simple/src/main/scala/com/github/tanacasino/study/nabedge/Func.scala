@@ -24,7 +24,6 @@ object Func extends App {
   val f1 = (x: Int) => { x + 1 }
   val f2 = (x: Int) => { x * 2 }
   val f3 = (x: Int) => { x - 1 }
-
   val f4 = chainFunction(f1, f2, f3)
   println(f4(10)) // => 21 ならok
 
@@ -33,9 +32,9 @@ object Func extends App {
   各要素に対してPartialFunctionにマッチした場合はその戻り値、
   マッチしない場合は元の要素を格納したSeqを返す関数（以下の例のreplace関数）を作ってみよう。
    */
-
   def replace(langs: Seq[String], pf: PartialFunction[String,String]) = {
-    langs.map{ lang => Try(pf(lang)).getOrElse(lang) }.toSeq
+//    langs.map{ lang => Try(pf(lang)).getOrElse(lang) }.toSeq
+//    langs.map{ lang => if (pf.isDefinedAt(lang)) pf(lang) else lang}.toSeq
   }
   val langs = Seq("Java", "JavaScript", "Scala")
   val result = replace(langs, { case "Scala" => "Cool" })
