@@ -1,39 +1,33 @@
 package com.githu.tanacasino.study.tanacasino.implicits
-import org.joda.time.DateTime
+import org.joda.time._
 
 object Conversion {
 
-
-
-  implicit class MyInt(val value: Int) {
-    def hoge() = (1 to value).foreach(_ => println("hoge"))
-
+  class RichDateTime(dt: DateTime) { 
+    def +(period: Period): DateTime = dt.plus(period)
+    def -(period: Period): DateTime = dt.minus(period)
   }
 
-  implicit class RichDateTime(val vlue: DateTime) {
-
-
-
+  implicit def convertDateTime(dt: DateTime)  = new RichDateTime(dt)
+  
+  class RichPeriod(i: Int) {
+    def day: Period = i match {
+      case i: Int => Period.days(i)
+      case _ => throw new Exception
+    }
+    def days: Period = Period.days(i)
   }
+
+  implicit def convertPeriod(i: Int) = new RichPeriod(i)
 
   def main(args: Array[String]) {
 
-//    println(twice(MyInt(2)))
-//    println(twice("2"))
-
-    //2.hoge()
-
     val now = new DateTime
+    println(now)
     val tomorrow = now + 1.day
-
+    println(tomorrow)
 
   }
-
-
-//  implicit  def string2Int(s: String): MyInt = MyInt(s.toInt)
-
-//  implicit def int2MyInt(i: Int): MyInt - MyInt(i)
-
 
 
 }
