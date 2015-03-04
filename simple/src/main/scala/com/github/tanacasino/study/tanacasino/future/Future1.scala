@@ -4,7 +4,7 @@ package com.github.tanacasino.study.tanacasino.future
 import scala.compat.Platform
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ExecutionContext, Await, Future}
 import scala.util.{Failure, Success}
 
 
@@ -46,7 +46,11 @@ trait Future1 {
   // Futureによる非同期計算
   def future2() = {
     println("Start")
-
+//    object MyObject {
+//      def apply[T](f: => T)(implicit val ec: ExecutionContext): T = {
+//        f
+//      }
+//    }
     val f = Future {
       Thread.sleep(5000)
       println("Future!!!")
