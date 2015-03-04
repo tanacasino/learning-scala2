@@ -6,11 +6,10 @@ import org.joda.time.DateTime
  * Created by kimiya.sato on 2015/03/04.
  */
 object DateTimeMain {
-  implicit class MyInt(value: Int) {
+  implicit class RichInt(value: Int) {
     def day(): Int = value
   }
-
-  implicit class MyDateTime(value: DateTime) {
+  implicit class RichDateTime(value: DateTime) {
     def +(i: Int): DateTime = value.plusDays(i)
   }
 
