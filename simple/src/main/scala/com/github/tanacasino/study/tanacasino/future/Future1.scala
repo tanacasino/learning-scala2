@@ -1,6 +1,7 @@
 package com.github.tanacasino.study.tanacasino.future
 
 
+import scala.compat.Platform
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -16,7 +17,15 @@ object FutureMain1 extends Future1 {
     //future4()
     //future5()
     //future6()
-    future7()
+    //future7()
+
+    //future11()
+    //future11_2()
+    future12()
+
+
+    // めんどいのでSleepしてますが、本当はAwaitですね
+    Thread.sleep(3000)
   }
 
 }
@@ -149,6 +158,8 @@ trait Future1 {
     val f2 = Future { "future2" }
     val f3 = Future { "future3" }
 
+    Platform.currentTime
+
     val f = Future.sequence(Seq(f1, f2, f3))
 
     f.onSuccess {
@@ -158,6 +169,103 @@ trait Future1 {
     Await.ready(f, Duration.Inf)
     Thread.sleep(1000)
     println("done")
+  }
+
+
+
+
+  def future11() = {
+    // なんか重い処理
+    def aggregate(id: String): Int = {
+      Thread.sleep(500)
+      // http request
+      id.size
+    }
+
+    val result = Seq("rikunavi", "mynavi", "en")
+                  .map(id => aggregate(id))
+                  .sum
+    println(result)
+
+    val result2 = Seq("rikunavi", "mynavi", "en")
+      .map(id => Future(aggregate(id)))
+
+    var sum = 0
+    result2.foreach { f =>
+      val x = Await.result(f, Duration.Inf)
+      sum += x
+    }
+    //Await.result(result2, Duration.Inf)
+
+    val result3 = Future
+      .reduce(
+        Seq("rikunavi", "mynavi", "en")
+          .map(id => Future(aggregate(id)))
+      )(_ + _)
+
+    val func: (Int, Int) => Int = (a, b) => a + b
+    List(1,2,3).reduce(_ + _)
+    List(1,2,3).reduce(func)
+  }
+
+
+
+
+  def future12() = {
+
+    def post(endpoint: String): Future[Either[Throwable, String]] = {
+      println(s"post to $endpoint")
+      Future.successful(Right("Ok"))
+    }
+
+    val server = "localhost"
+    val cluster1 = Seq("server1", "server2")
+    val cluster2 = Seq("server3", "server4")
+
+    Seq(cluster1, cluster2).foreach { cluster =>
+      val restore = cluster.map { server =>
+        post(s"http://$server/restore")
+      }
+      val restoreDone = Future.sequence(restore)
+      restoreDone.foreach { results =>
+        cluster.foreach { server =>
+          post(s"http://$server/activate")
+        }
+      }
+    }
+
+
+    Seq(cluster1, cluster2).foreach { cluster =>
+      // restoreリクエストを送信
+      cluster.map { server =>
+        post(s"http://${server}/restore")
+      }.map(Await.result(_, Duration.Inf)) // 待ち合わせ
+
+      // activateリクエストを送信
+      cluster.foreach { server =>
+        post(s"http://${server}/activate")
+      }
+    }
+
+
+    println("----------------")
+    Thread.sleep(2000)
+    println("----------------")
+
+
+    Seq(cluster1, cluster2).foreach { cluster =>
+      Future.sequence(
+        // restoreリクエストを送信
+        cluster.map { server =>
+          post(s"http://${server}/restore")
+        }
+      ).map { _ =>
+        // activateリクエストを送信
+        cluster.map { server =>
+          post(s"http://${server}/activate")
+        }
+      }
+    }
   }
 }
 
