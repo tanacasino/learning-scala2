@@ -29,3 +29,4 @@ project/project
 # Intellij IDEA specific
 /.idea
 /.idea_modules
+/atlassian-ide-plugin.xml
