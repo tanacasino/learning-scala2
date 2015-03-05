@@ -15,7 +15,6 @@ object Conversion {
       case i: Int => Period.days(i)
       case _ => throw new Exception
     }
-    def days: Period = Period.days(i)
   }
 
   implicit def convertPeriod(i: Int) = new RichPeriod(i)
