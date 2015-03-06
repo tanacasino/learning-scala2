@@ -8,7 +8,7 @@ import java.time._
 object ConversionForJavaTime {
 
   // java.timeでやってみました。
-  implicit class RichDateTime(dt: LocalDateTime) {
+  implicit class RichLocalDateTime(dt: LocalDateTime) {
     def +(period: Period): LocalDateTime = dt.plus(period)
     def -(period: Period): LocalDateTime = dt.minus(period)
     def +(duration: Duration): LocalDateTime = dt.plus(duration)
@@ -17,14 +17,15 @@ object ConversionForJavaTime {
     def nextMonth: LocalDateTime = dt.plus(1.month)
   }
 
-  implicit class RichDuration(i: Int) {
+  implicit class RichInt(i: Int) {
+    def nanoSecond: Duration = Duration.ofNanos(i)
+    def milliSecond: Duration = Duration.ofMillis(i)
+    def second: Duration = Duration.ofSeconds(i)
     def minute: Duration = Duration.ofMinutes(i)
     def hour: Duration = Duration.ofHours(i)
-  }
-
-  implicit class RichPeriod(i: Int) {
     def day: Period = Period.ofDays(i)
     def month: Period = Period.ofMonths(i)
+    def year: Period = Period.ofYears(i)
     def nextDay: Period = Period.ofDays(1)
   }
 
